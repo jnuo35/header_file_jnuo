@@ -27,7 +27,7 @@
             - That is, JNUO_LOG_DEBUG("log content"); JNUO_LOG_INFO("log content");
                        JNUO_LOG_ERROR("Log Content"); JNUO_LOG_WARN("Log Content");
 				   
-    - GitHub的项目：`https://github.com/jnuo35/header_file_jnuo`
+- GitHub的项目：`https://github.com/jnuo35/header_file_jnuo`
 	
-    - Projects on GitHub: `https://github.com/jnuo35/header_file_jnuo`
+- Projects on GitHub: `https://github.com/jnuo35/header_file_jnuo`
 	
