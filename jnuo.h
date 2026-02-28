@@ -2,6 +2,8 @@
   2026  from jnuo      v1.0.0
     - 持续制作中......
     - Continuously in production .....
+	- 使用前请加上using namespace jnuo;
+	- Please add 'using namespace jnuo' before use;
     - 功能1：日志功能
     - Function 1: Log function
       - 请先init_log_file("./你自定义的日志名.txt");
@@ -26,13 +28,11 @@
 #include <string.h>
 
 #ifdef _WIN32
-#include <direct.h>  // _mkdir
-#include <windows.h>
+#include <direct.h>
 #define mkdir_(path) _mkdir(path)
 #define PATH_SEP '\\'
 #else
 #include <sys/stat.h>
-#include <sys/types.h>
 #define mkdir_(path) mkdir(path, 0755)
 #define PATH_SEP '/'
 #endif
@@ -43,56 +43,32 @@ namespace jnuo {
 	static LogLevel g_log_threshold = LogLevel::Info;
 	static FILE* g_log_file = NULL;
 	
-// 递归创建目录
 	inline void create_directories(const char* path) {
 		if (!path || !*path) return;
-		
 		char temp[512];
 		strcpy(temp, path);
-		
-		// 去掉文件名，只留目录路径
 		char* last_sep = strrchr(temp, PATH_SEP);
-		if (!last_sep) return;  // 没有目录，就在当前目录
-		
-		*last_sep = '\0';  // 截断，只保留目录部分
-		
-		// 逐级创建目录
+		if (!last_sep) return;
+		*last_sep = '\0';
 		for (char* p = temp; *p; p++) {
 			if (*p == PATH_SEP) {
 				char old = *p;
 				*p = '\0';
-				mkdir_(temp);  // 尝试创建，失败也无所谓（可能已存在）
+				mkdir_(temp);
 				*p = old;
 			}
 		}
-		mkdir_(temp);  // 创建最后一级
+		mkdir_(temp);
 	}
 	
-// 初始化日志文件（智能版）
 	inline void init_log_file(const char* filename) {
 		if (g_log_file) fclose(g_log_file);
-		
-		// 先尝试创建目录
 		create_directories(filename);
-		
-		// 打开文件（追加模式）
 		g_log_file = fopen(filename, "a");
-		
-		if (g_log_file) {
-			JNUO_LOG_INFO("日志文件已创建: %s", filename);
-		} else {
-			// 如果失败，试试当前目录
-			g_log_file = fopen("./log.txt", "a");
-			if (g_log_file) {
-				JNUO_LOG_WARN("无法创建指定目录，使用当前目录的 log.txt");
-			}
-		}
 	}
 	
-// 关闭日志文件
 	inline void close_log_file() {
 		if (g_log_file) {
-			fprintf(g_log_file, "========== 日志结束 ==========\n");
 			fclose(g_log_file);
 			g_log_file = NULL;
 		}
@@ -130,9 +106,9 @@ namespace jnuo {
 		}
 	}
 	
-}
+} // namespace jnuo
 
-// 宏
+// ========== 宏定义必须放在 namespace 外面！ ==========
 #define JNUO_LOG_DEBUG(...) \
 do { if (jnuo::g_log_threshold <= jnuo::LogLevel::Debug) \
 jnuo::log(jnuo::LogLevel::Debug, __VA_ARGS__); } while(0)
